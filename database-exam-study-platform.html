@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Exam Study Platform - Units 1-9</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-darker: #020617;
+            --bg-card: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+            --success: #22c55e;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+        }
+
+        .exam-info {
+            background: var(--bg-card);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .exam-info h3 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .exam-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .exam-info li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .exam-info li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        /* Navigation */
+        .nav-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .progress-bar {
+            background: var(--bg-dark);
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .unit-nav {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .unit-btn {
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            color: var(--text-primary);
+            padding: 15px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .unit-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+
+        .unit-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+        }
+
+        .unit-btn.completed::after {
+            content: "✓";
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            color: var(--success);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .control-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .control-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        .control-btn.secondary {
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+        }
+
+        .control-btn.secondary:hover {
+            border-color: var(--secondary);
+            color: var(--secondary);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 20px;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1em;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Content */
+        .content-area {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 30px;
+            min-height: 500px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .unit-content {
+            display: none;
+        }
+
+        .unit-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .unit-title {
+            font-size: 2em;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: "▸";
+            color: var(--accent);
+        }
+
+        .theory-point {
+            background: var(--bg-dark);
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .theory-point h4 {
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #000;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .code-block pre {
+            margin: 0;
+            color: #a8dadc;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
+        }
+
+        /* Syntax Highlighting */
+        .keyword { color: #ff79c6; font-weight: bold; }
+        .string { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+        .function { color: #8be9fd; }
+        .number { color: #bd93f9; }
+
+        /* Quiz Section */
+        .quiz-question {
+            background: var(--bg-dark);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .quiz-question h4 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        .quiz-options {
+            list-style: none;
+            padding: 0;
+        }
+
+        .quiz-option {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: var(--bg-card);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .quiz-option.correct {
+            border-color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .quiz-option.incorrect {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .quiz-answer {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            display: none;
+        }
+
+        .quiz-answer.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .quiz-answer.correct {
+            border-left: 4px solid var(--success);
+        }
+
+        .quiz-answer.incorrect {
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Important Box */
+        .important-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 2px solid var(--accent);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .important-box h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .important-box h4::before {
+            content: "⚠";
+            font-size: 1.3em;
+        }
+
+        /* Practice Exercises */
+        .exercise {
+            background: var(--bg-dark);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .exercise h4 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+        }
+
+        .exercise-list {
+            list-style-position: inside;
+            color: var(--text-secondary);
+        }
+
+        .exercise-list li {
+            margin: 8px 0;
+            padding-left: 10px;
+        }
+
+        /* Study Tips */
+        .tip-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(37, 99, 235, 0.1));
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid var(--secondary);
+        }
+
+        .tip-card h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .unit-nav {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .control-btn, .search-box {
+                width: 100%;
+            }
+
+            .content-area {
+                padding: 20px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        .highlight {
+            background-color: rgba(245, 158, 11, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎓 Database Exam Study Platform</h1>
+            <p>Complete Study Guide for Units 1-9: Privileges to Cursors & Record Types</p>
+            
+            <div class="exam-info">
+                <h3>📋 Exam Information</h3>
+                <ul>
+                    <li><strong>Duration:</strong> 100 minutes (1 hour 40 minutes)</li>
+                    <li><strong>Questions:</strong> 50 random questions</li>
+                    <li><strong>Question Types:</strong> 1-mark (T/F), 2-mark (Multiple Choice), 3-mark (Code Analysis)</li>
+                    <li><strong>Coverage:</strong> All Units 1-9</li>
+                    <li><strong>Arrive:</strong> 15 minutes before exam time</li>
+                    <li><strong>Key Tip:</strong> Practice the SQL scripts, not just the slides!</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-value" id="unitsCompleted">0</div>
+                <div class="stat-label">Units Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">9</div>
+                <div class="stat-label">Total Units</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="studyTime">0</div>
+                <div class="stat-label">Minutes Studied</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="progressPercent">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+            <div class="unit-nav" id="unitNav"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="control-btn primary" onclick="toggleQuizMode()">📝 Toggle Quiz Mode</button>
+            <button class="control-btn primary" onclick="showAllUnits()">📚 View All Units</button>
+            <button class="control-btn secondary" onclick="resetProgress()">🔄 Reset Progress</button>
+            <input type="text" class="search-box" id="searchBox" placeholder="🔍 Search concepts, keywords, SQL..." oninput="searchContent()">
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area" id="contentArea"></div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Good luck on your exam!</strong> 🍀</p>
+            <p>Study hard, practice the scripts, and you'll ace it! - David Gulua</p>
+        </div>
+    </div>
+
+    <script>
+        // Study data structure
+        const studyData = {
+            unit1: {
+                title: "Unit 1: Privileges",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>System Privileges</h4>
+                                <p>Rights to perform actions in the database:</p>
+                                <ul>
+                                    <li>CREATE SESSION - Connect to database</li>
+                                    <li>CREATE TABLE - Create tables</li>
+                                    <li>CREATE VIEW - Create views</li>
+                                    <li>CREATE SEQUENCE - Create sequences</li>
+                                    <li>CREATE PROCEDURE - Create stored procedures</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Object Privileges</h4>
+                                <p>Rights to perform actions on specific database objects:</p>
+                                <ul>
+                                    <li>SELECT - Read data</li>
+                                    <li>INSERT - Add new rows</li>
+                                    <li>UPDATE - Modify existing rows</li>
+                                    <li>DELETE - Remove rows</li>
+                                    <li>ALTER - Change structure</li>
+                                    <li>INDEX - Create indexes</li>
+                                    <li>REFERENCES - Create foreign keys</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Roles</h4>
+                                <p>Named groups of privileges that can be granted to users. Simplifies privilege management.</p>
+                            </div>
+                            <div class="important-box">
+                                <h4>Important Concepts</h4>
+                                <ul>
+                                    <li><strong>WITH GRANT OPTION:</strong> Allows grantee to grant the privilege to others</li>
+                                    <li><strong>PUBLIC:</strong> Grants privilege to all users</li>
+                                    <li><strong>CASCADE CONSTRAINTS:</strong> Drops dependent constraints when revoking</li>
+                                    <li>System privileges are granted by DBA</li>
+                                    <li>Object privileges are granted by object owner</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Syntax",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Creating a User</span>
+<span class="keyword">CREATE USER</span> demo 
+<span class="keyword">IDENTIFIED BY</span> password123;
+
+<span class="comment">-- Granting System Privileges</span>
+<span class="keyword">GRANT</span> <span class="keyword">CREATE SESSION</span>, <span class="keyword">CREATE TABLE</span> <span class="keyword">TO</span> demo;
+
+<span class="comment">-- Granting Object Privileges</span>
+<span class="keyword">GRANT SELECT</span>, <span class="keyword">INSERT</span> <span class="keyword">ON</span> employees <span class="keyword">TO</span> demo;
+
+<span class="comment">-- Grant with WITH GRANT OPTION</span>
+<span class="keyword">GRANT SELECT ON</span> departments <span class="keyword">TO</span> demo <span class="keyword">WITH GRANT OPTION</span>;
+
+<span class="comment">-- Creating a Role</span>
+<span class="keyword">CREATE ROLE</span> app_developer;
+<span class="keyword">GRANT</span> <span class="keyword">CREATE SESSION</span>, <span class="keyword">CREATE TABLE</span> <span class="keyword">TO</span> app_developer;
+
+<span class="comment">-- Revoking Privileges</span>
+<span class="keyword">REVOKE SELECT ON</span> employees <span class="keyword">FROM</span> demo;
+
+<span class="comment">-- Changing Password</span>
+<span class="keyword">ALTER USER</span> demo <span class="keyword">IDENTIFIED BY</span> newpassword;</pre>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Practice Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: User Management</h4>
+                                <ol class="exercise-list">
+                                    <li>Create a user named 'john' with password 'john123'</li>
+                                    <li>Grant CREATE SESSION and CREATE TABLE privileges to john</li>
+                                    <li>Grant SELECT and INSERT on the employees table to john</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: Roles</h4>
+                                <ol class="exercise-list">
+                                    <li>Create a role named 'hr_manager'</li>
+                                    <li>Grant SELECT, INSERT, UPDATE, DELETE on employees to this role</li>
+                                    <li>Grant this role to user 'john'</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: Revoke</h4>
+                                <ol class="exercise-list">
+                                    <li>Revoke the INSERT privilege on employees from user john</li>
+                                    <li>What happens to john's ability to insert data?</li>
+                                </ol>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "A user can grant object privileges on tables they don't own.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "Only the object owner can grant privileges on that object."
+                    },
+                    {
+                        question: "Which system privilege allows a user to connect to the database?",
+                        type: "mc",
+                        options: ["CREATE SESSION", "CONNECT", "LOGIN", "CREATE USER"],
+                        answer: 0,
+                        explanation: "CREATE SESSION is the privilege needed to connect to the database."
+                    },
+                    {
+                        question: "The WITH GRANT OPTION clause allows the grantee to grant the same privilege to others.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "WITH GRANT OPTION enables privilege propagation to other users."
+                    }
+                ]
+            },
+            unit2: {
+                title: "Unit 2: Indexes, Sequences, Views & Synonyms",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Indexes</h4>
+                                <p>Schema objects that improve query performance by creating fast access paths to table data.</p>
+                                <ul>
+                                    <li>Automatically created for PRIMARY KEY and UNIQUE constraints</li>
+                                    <li>Can be created manually on frequently queried columns</li>
+                                    <li>B-tree (default) and Bitmap types</li>
+                                    <li>Trade-off: Faster reads, slower writes</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Sequences</h4>
+                                <p>Generate unique numeric values automatically, commonly used for primary keys.</p>
+                                <ul>
+                                    <li><strong>NEXTVAL:</strong> Gets the next value</li>
+                                    <li><strong>CURRVAL:</strong> Gets the current value (must call NEXTVAL first)</li>
+                                    <li>Can specify START WITH, INCREMENT BY, MAXVALUE, CACHE, CYCLE</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Views</h4>
+                                <p>Logical representation of data from one or more tables.</p>
+                                <ul>
+                                    <li><strong>Simple views:</strong> Based on one table, can perform DML</li>
+                                    <li><strong>Complex views:</strong> Joins, groups, functions - may restrict DML</li>
+                                    <li><strong>WITH CHECK OPTION:</strong> Prevents updates that remove rows from view</li>
+                                    <li><strong>WITH READ ONLY:</strong> Makes view read-only</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Synonyms</h4>
+                                <p>Alternative names for database objects. Can be public or private.</p>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Syntax",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Creating Indexes</span>
+<span class="keyword">CREATE INDEX</span> emp_last_name_idx <span class="keyword">ON</span> employees(last_name);
+<span class="keyword">CREATE UNIQUE INDEX</span> emp_email_idx <span class="keyword">ON</span> employees(email);
+
+<span class="comment">-- Creating Sequences</span>
+<span class="keyword">CREATE SEQUENCE</span> emp_seq
+  <span class="keyword">START WITH</span> <span class="number">200</span>
+  <span class="keyword">INCREMENT BY</span> <span class="number">1</span>
+  <span class="keyword">MAXVALUE</span> <span class="number">9999</span>
+  <span class="keyword">NOCACHE</span>
+  <span class="keyword">NOCYCLE</span>;
+
+<span class="comment">-- Using Sequences</span>
+<span class="keyword">INSERT INTO</span> employees (employee_id, last_name, email, hire_date, job_id)
+<span class="keyword">VALUES</span> (emp_seq.<span class="keyword">NEXTVAL</span>, <span class="string">'Smith'</span>, <span class="string">'JSMITH'</span>, <span class="keyword">SYSDATE</span>, <span class="string">'IT_PROG'</span>);
+
+<span class="keyword">SELECT</span> emp_seq.<span class="keyword">CURRVAL</span> <span class="keyword">FROM DUAL</span>;
+
+<span class="comment">-- Creating Views</span>
+<span class="keyword">CREATE VIEW</span> emp_details_view <span class="keyword">AS</span>
+  <span class="keyword">SELECT</span> employee_id, first_name, last_name, salary
+  <span class="keyword">FROM</span> employees;
+
+<span class="keyword">CREATE VIEW</span> high_salary_view <span class="keyword">AS</span>
+  <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees
+  <span class="keyword">WHERE</span> salary > <span class="number">10000</span>
+  <span class="keyword">WITH CHECK OPTION</span>;
+
+<span class="keyword">CREATE VIEW</span> readonly_view <span class="keyword">AS</span>
+  <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees
+  <span class="keyword">WITH READ ONLY</span>;
+
+<span class="comment">-- Creating Synonyms</span>
+<span class="keyword">CREATE SYNONYM</span> emp <span class="keyword">FOR</span> employees;
+<span class="keyword">CREATE PUBLIC SYNONYM</span> emps <span class="keyword">FOR</span> employees;</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "Indexes are automatically created for PRIMARY KEY and UNIQUE constraints.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "Oracle automatically creates indexes for PRIMARY KEY and UNIQUE constraints."
+                    },
+                    {
+                        question: "You must use CURRVAL before using NEXTVAL for a sequence.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "NEXTVAL must be called first in a session before CURRVAL can be used."
+                    },
+                    {
+                        question: "Which clause prevents DML operations on a view?",
+                        type: "mc",
+                        options: ["WITH CHECK OPTION", "WITH READ ONLY", "NO DML", "READONLY"],
+                        answer: 1,
+                        explanation: "WITH READ ONLY makes a view read-only, preventing all DML operations."
+                    }
+                ]
+            },
+            unit3: {
+                title: "Unit 3: Subqueries",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Single-Row Subqueries</h4>
+                                <p>Return only one row. Use single-row operators: =, >, <, >=, <=, <>, !=</p>
+                                <div class="code-block">
+                                    <pre><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary > (<span class="keyword">SELECT</span> salary <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> employee_id = <span class="number">104</span>);</pre>
+                                </div>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Multiple-Row Subqueries</h4>
+                                <p>Return more than one row. Use multiple-row operators:</p>
+                                <ul>
+                                    <li><strong>IN:</strong> Equal to any value in the list</li>
+                                    <li><strong>ANY:</strong> Compare to each value (< ANY means less than max)</li>
+                                    <li><strong>ALL:</strong> Compare to every value (> ALL means greater than max)</li>
+                                    <li><strong>EXISTS:</strong> Tests for existence of rows</li>
+                                </ul>
+                            </div>
+                            <div class="important-box">
+                                <h4>Critical NULL Handling</h4>
+                                <p>NOT IN with NULL values returns NO rows! Always filter NULLs:</p>
+                                <div class="code-block">
+                                    <pre><span class="comment">-- WRONG: Returns nothing if any manager_id is NULL</span>
+<span class="keyword">WHERE</span> employee_id <span class="keyword">NOT IN</span> (<span class="keyword">SELECT</span> manager_id <span class="keyword">FROM</span> employees);
+
+<span class="comment">-- CORRECT: Filter out NULLs</span>
+<span class="keyword">WHERE</span> employee_id <span class="keyword">NOT IN</span> (<span class="keyword">SELECT</span> manager_id <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> manager_id <span class="keyword">IS NOT NULL</span>);</pre>
+                                </div>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Examples",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Using IN</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> department_id <span class="keyword">IN</span> (
+    <span class="keyword">SELECT</span> department_id <span class="keyword">FROM</span> departments 
+    <span class="keyword">WHERE</span> location_id = <span class="number">1700</span>
+);
+
+<span class="comment">-- Using ANY (< ANY means less than maximum)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary < <span class="keyword">ANY</span> (
+    <span class="keyword">SELECT</span> salary <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> job_id = <span class="string">'IT_PROG'</span>
+);
+
+<span class="comment">-- Using ALL (> ALL means greater than maximum)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees
+<span class="keyword">WHERE</span> salary > <span class="keyword">ALL</span> (
+    <span class="keyword">SELECT</span> salary <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> job_id = <span class="string">'IT_PROG'</span>
+);
+
+<span class="comment">-- Using EXISTS</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> departments d
+<span class="keyword">WHERE EXISTS</span> (
+    <span class="keyword">SELECT</span> <span class="number">1</span> <span class="keyword">FROM</span> employees e 
+    <span class="keyword">WHERE</span> e.department_id = d.department_id
+);
+
+<span class="comment">-- Correlated Subquery</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees e
+<span class="keyword">WHERE</span> salary > (
+    <span class="keyword">SELECT AVG</span>(salary) <span class="keyword">FROM</span> employees 
+    <span class="keyword">WHERE</span> department_id = e.department_id
+);</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "Single-row subqueries can only use the = operator.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "Single-row subqueries can use =, >, <, >=, <=, <>, !="
+                    },
+                    {
+                        question: "What does < ANY mean?",
+                        type: "mc",
+                        options: [
+                            "Less than the minimum value",
+                            "Less than the maximum value",
+                            "Less than all values",
+                            "Less than the average"
+                        ],
+                        answer: 1,
+                        explanation: "< ANY means less than the maximum value (less than at least one value)"
+                    },
+                    {
+                        question: "If a subquery with NOT IN contains a NULL value, the outer query returns no rows.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "NULL values cause NOT IN to fail. Always filter NULLs when using NOT IN."
+                    }
+                ]
+            },
+            unit4: {
+                title: "Unit 4: Data Dictionary",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Dictionary View Prefixes</h4>
+                                <ul>
+                                    <li><strong>USER_*:</strong> Objects owned by the current user</li>
+                                    <li><strong>ALL_*:</strong> Objects accessible to the current user</li>
+                                    <li><strong>DBA_*:</strong> All objects in the database (DBA access only)</li>
+                                    <li><strong>V$_*:</strong> Dynamic performance views</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Commonly Used Views</h4>
+                                <ul>
+                                    <li><strong>USER_TABLES:</strong> Tables owned by user</li>
+                                    <li><strong>USER_VIEWS:</strong> Views owned by user</li>
+                                    <li><strong>USER_SEQUENCES:</strong> Sequences owned by user</li>
+                                    <li><strong>USER_INDEXES:</strong> Indexes owned by user</li>
+                                    <li><strong>USER_CONSTRAINTS:</strong> Constraints on user's tables</li>
+                                    <li><strong>USER_TAB_COLUMNS:</strong> Columns in user's tables</li>
+                                    <li><strong>USER_OBJECTS:</strong> All objects owned by user</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Constraint Types in USER_CONSTRAINTS</h4>
+                                <ul>
+                                    <li><strong>P:</strong> Primary Key</li>
+                                    <li><strong>R:</strong> Foreign Key (Reference)</li>
+                                    <li><strong>U:</strong> Unique</li>
+                                    <li><strong>C:</strong> Check constraint</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Queries",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- List all your tables</span>
+<span class="keyword">SELECT</span> table_name <span class="keyword">FROM</span> USER_TABLES;
+
+<span class="comment">-- View table structure</span>
+<span class="keyword">SELECT</span> column_name, data_type, data_length, nullable
+<span class="keyword">FROM</span> USER_TAB_COLUMNS
+<span class="keyword">WHERE</span> table_name = <span class="string">'EMPLOYEES'</span>;
+
+<span class="comment">-- View constraints</span>
+<span class="keyword">SELECT</span> constraint_name, constraint_type, search_condition
+<span class="keyword">FROM</span> USER_CONSTRAINTS
+<span class="keyword">WHERE</span> table_name = <span class="string">'EMPLOYEES'</span>;
+
+<span class="comment">-- View indexes</span>
+<span class="keyword">SELECT</span> index_name, table_name, uniqueness
+<span class="keyword">FROM</span> USER_INDEXES
+<span class="keyword">WHERE</span> table_name = <span class="string">'EMPLOYEES'</span>;
+
+<span class="comment">-- View sequences</span>
+<span class="keyword">SELECT</span> sequence_name, min_value, max_value, increment_by
+<span class="keyword">FROM</span> USER_SEQUENCES;
+
+<span class="comment">-- View your privileges</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> USER_SYS_PRIVS;
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> USER_TAB_PRIVS;
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> USER_ROLE_PRIVS;</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "Dictionary views can be updated by users.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "Dictionary views are read-only."
+                    },
+                    {
+                        question: "In USER_CONSTRAINTS, what does constraint_type 'R' represent?",
+                        type: "mc",
+                        options: ["Required", "Reference (Foreign Key)", "Registered", "Restricted"],
+                        answer: 1,
+                        explanation: "'R' stands for Reference, which is a Foreign Key constraint."
+                    }
+                ]
+            },
+            unit5: {
+                title: "Unit 5: Advanced SQL Scripting",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Substitution Variables</h4>
+                                <ul>
+                                    <li><strong>&:</strong> Single ampersand - prompts each time used</li>
+                                    <li><strong>&&:</strong> Double ampersand - prompts once, remembers for session</li>
+                                    <li><strong>DEFINE:</strong> Creates a variable</li>
+                                    <li><strong>UNDEFINE:</strong> Removes a variable</li>
+                                    <li><strong>ACCEPT:</strong> Prompts with custom message and data type</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Report Formatting</h4>
+                                <ul>
+                                    <li><strong>COLUMN:</strong> Formats column output</li>
+                                    <li><strong>BREAK ON:</strong> Creates breaks in reports</li>
+                                    <li><strong>COMPUTE:</strong> Performs calculations</li>
+                                    <li><strong>TTITLE/BTITLE:</strong> Sets page titles</li>
+                                    <li><strong>SPOOL:</strong> Saves output to file</li>
+                                    <li><strong>SET VERIFY ON/OFF:</strong> Shows before/after substitution</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Syntax",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Single ampersand (prompts each time)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> employee_id = &emp_id;
+
+<span class="comment">-- Double ampersand (prompts once)</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id = &&dept_id;
+<span class="keyword">SELECT COUNT</span>(*) <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id = &&dept_id;
+
+<span class="comment">-- DEFINE and UNDEFINE</span>
+<span class="keyword">DEFINE</span> emp_name = <span class="string">'King'</span>;
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> last_name = <span class="string">'&emp_name'</span>;
+<span class="keyword">UNDEFINE</span> emp_name;
+
+<span class="comment">-- ACCEPT with data type</span>
+<span class="keyword">ACCEPT</span> min_sal <span class="keyword">NUMBER PROMPT</span> <span class="string">'Enter minimum salary: '</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> salary >= &min_sal;
+
+<span class="comment">-- Column formatting</span>
+<span class="keyword">COLUMN</span> first_name <span class="keyword">FORMAT</span> A15;
+<span class="keyword">COLUMN</span> salary <span class="keyword">FORMAT</span> $99,999.99;
+
+<span class="comment">-- Spooling</span>
+<span class="keyword">SPOOL</span> employee_report.txt;
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees;
+<span class="keyword">SPOOL OFF</span>;</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "Single ampersand (&) variables retain their values throughout the session.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "Single & prompts each time; && retains values throughout the session."
+                    },
+                    {
+                        question: "What does SET VERIFY ON do?",
+                        type: "mc",
+                        options: [
+                            "Validates SQL syntax",
+                            "Shows before/after substitution text",
+                            "Requires user confirmation",
+                            "Enables security checks"
+                        ],
+                        answer: 1,
+                        explanation: "SET VERIFY ON displays the text before and after variable substitution."
+                    }
+                ]
+            },
+            unit6: {
+                title: "Unit 6: PL/SQL Block Structure",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>PL/SQL Block Structure</h4>
+                                <div class="code-block">
+                                    <pre><span class="keyword">DECLARE</span>      <span class="comment">-- Optional: Variable declarations</span>
+   variables
+<span class="keyword">BEGIN</span>        <span class="comment">-- Mandatory: Executable statements</span>
+   statements
+<span class="keyword">EXCEPTION</span>    <span class="comment">-- Optional: Error handling</span>
+   handlers
+<span class="keyword">END</span>;         <span class="comment">-- Mandatory</span></pre>
+                                </div>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Variable Types</h4>
+                                <ul>
+                                    <li><strong>Scalar:</strong> NUMBER, VARCHAR2, DATE, BOOLEAN</li>
+                                    <li><strong>%TYPE:</strong> Inherits column data type</li>
+                                    <li><strong>%ROWTYPE:</strong> Inherits entire row structure</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Conditional Statements</h4>
+                                <ul>
+                                    <li>IF-THEN-END IF</li>
+                                    <li>IF-THEN-ELSE-END IF</li>
+                                    <li>IF-THEN-ELSIF-ELSE-END IF (note: ELSIF with one E!)</li>
+                                    <li>CASE (Simple and Searched)</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Examples",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Simple Block</span>
+<span class="keyword">BEGIN</span>
+    DBMS_OUTPUT.PUT_LINE(<span class="string">'Hello PL/SQL!'</span>);
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Using %TYPE</span>
+<span class="keyword">DECLARE</span>
+    v_salary employees.salary%<span class="keyword">TYPE</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">SELECT</span> salary <span class="keyword">INTO</span> v_salary
+    <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> employee_id = <span class="number">100</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Using %ROWTYPE</span>
+<span class="keyword">DECLARE</span>
+    v_employee employees%<span class="keyword">ROWTYPE</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">SELECT</span> * <span class="keyword">INTO</span> v_employee
+    <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> employee_id = <span class="number">100</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- IF-ELSIF-ELSE</span>
+<span class="keyword">DECLARE</span>
+    v_salary <span class="keyword">NUMBER</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">SELECT</span> salary <span class="keyword">INTO</span> v_salary <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> employee_id = <span class="number">100</span>;
+    
+    <span class="keyword">IF</span> v_salary > <span class="number">15000</span> <span class="keyword">THEN</span>
+        DBMS_OUTPUT.PUT_LINE(<span class="string">'High'</span>);
+    <span class="keyword">ELSIF</span> v_salary > <span class="number">10000</span> <span class="keyword">THEN</span>
+        DBMS_OUTPUT.PUT_LINE(<span class="string">'Medium'</span>);
+    <span class="keyword">ELSE</span>
+        DBMS_OUTPUT.PUT_LINE(<span class="string">'Low'</span>);
+    <span class="keyword">END IF</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- CASE Statement</span>
+<span class="keyword">DECLARE</span>
+    v_job_id <span class="keyword">VARCHAR2</span>(<span class="number">10</span>) := <span class="string">'IT_PROG'</span>;
+    v_title <span class="keyword">VARCHAR2</span>(<span class="number">35</span>);
+<span class="keyword">BEGIN</span>
+    <span class="keyword">CASE</span> v_job_id
+        <span class="keyword">WHEN</span> <span class="string">'IT_PROG'</span> <span class="keyword">THEN</span> v_title := <span class="string">'Programmer'</span>;
+        <span class="keyword">WHEN</span> <span class="string">'SA_REP'</span> <span class="keyword">THEN</span> v_title := <span class="string">'Sales Rep'</span>;
+        <span class="keyword">ELSE</span> v_title := <span class="string">'Other'</span>;
+    <span class="keyword">END CASE</span>;
+<span class="keyword">END</span>;
+/</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "The DECLARE section is mandatory in a PL/SQL block.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "Only BEGIN and END are mandatory. DECLARE and EXCEPTION are optional."
+                    },
+                    {
+                        question: "%TYPE is used to declare a variable with the same type as a table column.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "%TYPE inherits the data type from a column, ensuring consistency."
+                    },
+                    {
+                        question: "In an IF-THEN-ELSIF statement, how many conditions can be true and executed?",
+                        type: "mc",
+                        options: ["All of them", "At least one", "Only one", "None"],
+                        answer: 2,
+                        explanation: "Only the first true condition is executed, then the statement exits."
+                    }
+                ]
+            },
+            unit7: {
+                title: "Unit 7: PL/SQL Loops",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Basic LOOP</h4>
+                                <div class="code-block">
+                                    <pre><span class="keyword">LOOP</span>
+    statements
+    <span class="keyword">EXIT WHEN</span> condition;
+<span class="keyword">END LOOP</span>;</pre>
+                                </div>
+                            </div>
+                            <div class="theory-point">
+                                <h4>WHILE LOOP</h4>
+                                <div class="code-block">
+                                    <pre><span class="keyword">WHILE</span> condition <span class="keyword">LOOP</span>
+    statements
+<span class="keyword">END LOOP</span>;</pre>
+                                </div>
+                            </div>
+                            <div class="theory-point">
+                                <h4>FOR LOOP</h4>
+                                <div class="code-block">
+                                    <pre><span class="keyword">FOR</span> counter <span class="keyword">IN</span> [<span class="keyword">REVERSE</span>] lower..upper <span class="keyword">LOOP</span>
+    statements
+<span class="keyword">END LOOP</span>;</pre>
+                                </div>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Loop Control</h4>
+                                <ul>
+                                    <li><strong>EXIT:</strong> Terminates loop immediately</li>
+                                    <li><strong>EXIT WHEN:</strong> Exits when condition is true</li>
+                                    <li><strong>CONTINUE:</strong> Skips to next iteration</li>
+                                    <li><strong>CONTINUE WHEN:</strong> Skips when condition is true</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Examples",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Basic LOOP</span>
+<span class="keyword">DECLARE</span>
+    v_counter <span class="keyword">NUMBER</span> := <span class="number">1</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(v_counter);
+        v_counter := v_counter + <span class="number">1</span>;
+        <span class="keyword">EXIT WHEN</span> v_counter > <span class="number">5</span>;
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- WHILE LOOP</span>
+<span class="keyword">DECLARE</span>
+    v_counter <span class="keyword">NUMBER</span> := <span class="number">1</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">WHILE</span> v_counter <= <span class="number">5</span> <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(v_counter);
+        v_counter := v_counter + <span class="number">1</span>;
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- FOR LOOP</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">FOR</span> i <span class="keyword">IN</span> <span class="number">1</span>..<span class="number">5</span> <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(i);
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- REVERSE FOR LOOP</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">FOR</span> i <span class="keyword">IN REVERSE</span> <span class="number">1</span>..<span class="number">5</span> <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(i);  <span class="comment">-- Prints 5, 4, 3, 2, 1</span>
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- CONTINUE example</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">FOR</span> i <span class="keyword">IN</span> <span class="number">1</span>..<span class="number">10</span> <span class="keyword">LOOP</span>
+        <span class="keyword">CONTINUE WHEN</span> <span class="function">MOD</span>(i, <span class="number">2</span>) = <span class="number">0</span>;  <span class="comment">-- Skip even numbers</span>
+        DBMS_OUTPUT.PUT_LINE(i);
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "FOR loop counter can be manually modified inside the loop.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "FOR loop counter is implicitly declared and automatically incremented; cannot be modified."
+                    },
+                    {
+                        question: "Which loop guarantees at least one execution?",
+                        type: "mc",
+                        options: ["FOR loop", "WHILE loop", "Basic LOOP", "None"],
+                        answer: 2,
+                        explanation: "Basic LOOP executes at least once because the condition is checked inside the loop with EXIT WHEN."
+                    },
+                    {
+                        question: "WHILE loop condition is evaluated before each iteration.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "WHILE evaluates the condition before each iteration; if false initially, loop never executes."
+                    }
+                ]
+            },
+            unit8: {
+                title: "Unit 8: Triggers",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Trigger Types</h4>
+                                <p><strong>Based on Timing:</strong></p>
+                                <ul>
+                                    <li><strong>BEFORE:</strong> Executes before the DML operation</li>
+                                    <li><strong>AFTER:</strong> Executes after the DML operation</li>
+                                    <li><strong>INSTEAD OF:</strong> Executes instead of DML (for views)</li>
+                                </ul>
+                                <p><strong>Based on Level:</strong></p>
+                                <ul>
+                                    <li><strong>Statement Level:</strong> Fires once per DML statement (default)</li>
+                                    <li><strong>Row Level:</strong> Fires once per affected row (FOR EACH ROW)</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Trigger Predicates</h4>
+                                <ul>
+                                    <li><strong>INSERTING:</strong> TRUE during INSERT</li>
+                                    <li><strong>UPDATING:</strong> TRUE during UPDATE</li>
+                                    <li><strong>DELETING:</strong> TRUE during DELETE</li>
+                                    <li><strong>UPDATING('column'):</strong> TRUE when specific column updated</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Pseudo Records (Row-Level Only)</h4>
+                                <ul>
+                                    <li><strong>:OLD.column:</strong> Value before the change</li>
+                                    <li><strong>:NEW.column:</strong> Value after the change</li>
+                                </ul>
+                            </div>
+                            <div class="important-box">
+                                <h4>Trigger Restrictions</h4>
+                                <ul>
+                                    <li>Cannot use COMMIT, ROLLBACK, SAVEPOINT</li>
+                                    <li>:NEW and :OLD only available in row-level triggers</li>
+                                    <li>:NEW can only be modified in BEFORE triggers</li>
+                                    <li>Cannot read or modify mutating tables</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Examples",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Statement-Level Trigger</span>
+<span class="keyword">CREATE OR REPLACE TRIGGER</span> emp_stmt_trigger
+<span class="keyword">AFTER INSERT OR UPDATE OR DELETE ON</span> employees
+<span class="keyword">BEGIN</span>
+    <span class="keyword">IF INSERTING THEN</span>
+        DBMS_OUTPUT.PUT_LINE(<span class="string">'INSERT performed'</span>);
+    <span class="keyword">ELSIF UPDATING THEN</span>
+        DBMS_OUTPUT.PUT_LINE(<span class="string">'UPDATE performed'</span>);
+    <span class="keyword">ELSIF DELETING THEN</span>
+        DBMS_OUTPUT.PUT_LINE(<span class="string">'DELETE performed'</span>);
+    <span class="keyword">END IF</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Row-Level Trigger (Audit)</span>
+<span class="keyword">CREATE OR REPLACE TRIGGER</span> emp_salary_audit
+<span class="keyword">AFTER UPDATE OF</span> salary <span class="keyword">ON</span> employees
+<span class="keyword">FOR EACH ROW</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">INSERT INTO</span> audit_table (
+        employee_id, old_salary, new_salary, changed_by, change_date
+    ) <span class="keyword">VALUES</span> (
+        :<span class="keyword">OLD</span>.employee_id,
+        :<span class="keyword">OLD</span>.salary,
+        :<span class="keyword">NEW</span>.salary,
+        <span class="function">USER</span>,
+        <span class="keyword">SYSDATE</span>
+    );
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Preventing Invalid Operations</span>
+<span class="keyword">CREATE OR REPLACE TRIGGER</span> prevent_salary_decrease
+<span class="keyword">BEFORE UPDATE OF</span> salary <span class="keyword">ON</span> employees
+<span class="keyword">FOR EACH ROW</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">IF</span> :<span class="keyword">NEW</span>.salary < :<span class="keyword">OLD</span>.salary <span class="keyword">THEN</span>
+        RAISE_APPLICATION_ERROR(<span class="number">-20001</span>, <span class="string">'Cannot decrease salary'</span>);
+    <span class="keyword">END IF</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Auto-populate values</span>
+<span class="keyword">CREATE OR REPLACE TRIGGER</span> auto_email
+<span class="keyword">BEFORE INSERT ON</span> employees
+<span class="keyword">FOR EACH ROW</span>
+<span class="keyword">BEGIN</span>
+    :<span class="keyword">NEW</span>.email := <span class="function">UPPER</span>(:<span class="keyword">NEW</span>.email);
+    <span class="keyword">IF</span> :<span class="keyword">NEW</span>.hire_date <span class="keyword">IS NULL THEN</span>
+        :<span class="keyword">NEW</span>.hire_date := <span class="keyword">SYSDATE</span>;
+    <span class="keyword">END IF</span>;
+<span class="keyword">END</span>;
+/</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "Triggers can contain COMMIT statements.",
+                        type: "tf",
+                        answer: false,
+                        explanation: "COMMIT, ROLLBACK, and SAVEPOINT are not allowed in triggers."
+                    },
+                    {
+                        question: ":NEW and :OLD are available in statement-level triggers.",
+                        type: "tf",
+                        answer: false,
+                        explanation: ":NEW and :OLD are only available in row-level triggers (FOR EACH ROW)."
+                    },
+                    {
+                        question: "Which executes first?",
+                        type: "mc",
+                        options: [
+                            "AFTER INSERT trigger",
+                            "BEFORE INSERT trigger",
+                            "They execute simultaneously",
+                            "Order is random"
+                        ],
+                        answer: 1,
+                        explanation: "BEFORE triggers execute before the DML operation."
+                    }
+                ]
+            },
+            unit9: {
+                title: "Unit 9: Cursors & Record Types",
+                sections: [
+                    {
+                        title: "Theory Summary",
+                        content: `
+                            <div class="theory-point">
+                                <h4>Cursor Types</h4>
+                                <p><strong>Implicit Cursors:</strong></p>
+                                <ul>
+                                    <li>Automatically created for all DML and single-row SELECT</li>
+                                    <li>Managed by Oracle</li>
+                                    <li>SQL% attributes available</li>
+                                </ul>
+                                <p><strong>Explicit Cursors:</strong></p>
+                                <ul>
+                                    <li>Declared and managed by programmer</li>
+                                    <li>For multi-row SELECT statements</li>
+                                    <li>More control over processing</li>
+                                </ul>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Explicit Cursor Operations</h4>
+                                <ol>
+                                    <li><strong>DECLARE:</strong> Define the cursor</li>
+                                    <li><strong>OPEN:</strong> Allocate memory and identify result set</li>
+                                    <li><strong>FETCH:</strong> Retrieve a row from result set</li>
+                                    <li><strong>CLOSE:</strong> Release memory</li>
+                                </ol>
+                            </div>
+                            <div class="theory-point">
+                                <h4>Cursor Attributes</h4>
+                                <ul>
+                                    <li><strong>%ISOPEN:</strong> Is cursor open?</li>
+                                    <li><strong>%FOUND:</strong> Did FETCH return a row?</li>
+                                    <li><strong>%NOTFOUND:</strong> Did FETCH fail to return a row?</li>
+                                    <li><strong>%ROWCOUNT:</strong> How many rows fetched so far?</li>
+                                </ul>
+                            </div>
+                            <div class="important-box">
+                                <h4>Cursor FOR Loop</h4>
+                                <p>Automatically opens, fetches, and closes cursor. No need for explicit OPEN, FETCH, CLOSE!</p>
+                            </div>
+                        `
+                    },
+                    {
+                        title: "Key Examples",
+                        content: `
+                            <div class="code-block">
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                                <pre><span class="comment">-- Explicit Cursor with Manual Control</span>
+<span class="keyword">DECLARE</span>
+    <span class="keyword">CURSOR</span> emp_cursor <span class="keyword">IS</span>
+        <span class="keyword">SELECT</span> employee_id, first_name, salary
+        <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id = <span class="number">60</span>;
+    
+    v_emp_id <span class="keyword">NUMBER</span>;
+    v_name <span class="keyword">VARCHAR2</span>(<span class="number">50</span>);
+    v_salary <span class="keyword">NUMBER</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">OPEN</span> emp_cursor;
+    
+    <span class="keyword">LOOP</span>
+        <span class="keyword">FETCH</span> emp_cursor <span class="keyword">INTO</span> v_emp_id, v_name, v_salary;
+        <span class="keyword">EXIT WHEN</span> emp_cursor%<span class="keyword">NOTFOUND</span>;
+        
+        DBMS_OUTPUT.PUT_LINE(v_name || <span class="string">' - '</span> || v_salary);
+    <span class="keyword">END LOOP</span>;
+    
+    <span class="keyword">CLOSE</span> emp_cursor;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Cursor FOR Loop (Automatic)</span>
+<span class="keyword">DECLARE</span>
+    <span class="keyword">CURSOR</span> emp_cursor <span class="keyword">IS</span>
+        <span class="keyword">SELECT</span> first_name, last_name, salary
+        <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id = <span class="number">60</span>;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">FOR</span> emp_rec <span class="keyword">IN</span> emp_cursor <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(emp_rec.first_name || <span class="string">' - '</span> || emp_rec.salary);
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Inline Cursor FOR Loop</span>
+<span class="keyword">BEGIN</span>
+    <span class="keyword">FOR</span> emp_rec <span class="keyword">IN</span> (<span class="keyword">SELECT</span> first_name, salary <span class="keyword">FROM</span> employees) <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(emp_rec.first_name);
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- Cursor with Parameters</span>
+<span class="keyword">DECLARE</span>
+    <span class="keyword">CURSOR</span> emp_cursor (p_dept_id <span class="keyword">NUMBER</span>) <span class="keyword">IS</span>
+        <span class="keyword">SELECT</span> first_name, salary
+        <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id = p_dept_id;
+<span class="keyword">BEGIN</span>
+    <span class="keyword">FOR</span> emp_rec <span class="keyword">IN</span> emp_cursor(<span class="number">60</span>) <span class="keyword">LOOP</span>
+        DBMS_OUTPUT.PUT_LINE(emp_rec.first_name);
+    <span class="keyword">END LOOP</span>;
+<span class="keyword">END</span>;
+/
+
+<span class="comment">-- REF CURSOR</span>
+<span class="keyword">DECLARE</span>
+    <span class="keyword">TYPE</span> emp_cursor_type <span class="keyword">IS REF CURSOR</span>;
+    emp_cv emp_cursor_type;
+    v_name <span class="keyword">VARCHAR2</span>(<span class="number">50</span>);
+<span class="keyword">BEGIN</span>
+    <span class="keyword">OPEN</span> emp_cv <span class="keyword">FOR</span>
+        <span class="keyword">SELECT</span> first_name <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> department_id = <span class="number">60</span>;
+    
+    <span class="keyword">LOOP</span>
+        <span class="keyword">FETCH</span> emp_cv <span class="keyword">INTO</span> v_name;
+        <span class="keyword">EXIT WHEN</span> emp_cv%<span class="keyword">NOTFOUND</span>;
+        DBMS_OUTPUT.PUT_LINE(v_name);
+    <span class="keyword">END LOOP</span>;
+    
+    <span class="keyword">CLOSE</span> emp_cv;
+<span class="keyword">END</span>;
+/</pre>
+                            </div>
+                        `
+                    }
+                ],
+                quiz: [
+                    {
+                        question: "Explicit cursors must be closed after use.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "Explicit cursors must be closed to free resources."
+                    },
+                    {
+                        question: "Cursor FOR loops automatically open and close the cursor.",
+                        type: "tf",
+                        answer: true,
+                        explanation: "Cursor FOR loops handle all cursor operations automatically."
+                    },
+                    {
+                        question: "Which attribute tells if a FETCH was successful?",
+                        type: "mc",
+                        options: ["%ISOPEN", "%FOUND", "%ROWCOUNT", "%SUCCESS"],
+                        answer: 1,
+                        explanation: "%FOUND returns TRUE if the last FETCH returned a row."
+                    }
+                ]
+            }
+        };
+
+        let currentUnit = 'unit1';
+        let completedUnits = new Set();
+        let quizMode = false;
+        let studyStartTime = Date.now();
+        let totalStudyTime = 0;
+
+        // Initialize
+        function init() {
+            loadProgress();
+            renderUnitNav();
+            renderContent();
+            updateProgress();
+            startStudyTimer();
+        }
+
+        // Render unit navigation
+        function renderUnitNav() {
+            const nav = document.getElementById('unitNav');
+            let html = '';
+            
+            Object.keys(studyData).forEach((unitKey, index) => {
+                const unit = studyData[unitKey];
+                const isActive = unitKey === currentUnit;
+                const isCompleted = completedUnits.has(unitKey);
+                
+                html += `
+                    <button class="unit-btn ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}"
+                            onclick="switchUnit('${unitKey}')">
+                        Unit ${index + 1}
+                        <div style="font-size: 0.85em; margin-top: 5px; opacity: 0.8;">
+                            ${unit.title.split(':')[1].trim()}
+                        </div>
+                    </button>
+                `;
+            });
+            
+            nav.innerHTML = html;
+        }
+
+        // Switch unit
+        function switchUnit(unitKey) {
+            currentUnit = unitKey;
+            renderUnitNav();
+            renderContent();
+            saveProgress();
+        }
+
+        // Render content
+        function renderContent() {
+            const container = document.getElementById('contentArea');
+            const unit = studyData[currentUnit];
+            
+            let html = `<div class="unit-content active">`;
+            html += `<div class="unit-title">${unit.title}</div>`;
+            
+            // Render sections
+            unit.sections.forEach(section => {
+                html += `
+                    <div class="section">
+                        <div class="section-title">${section.title}</div>
+                        ${section.content}
+                    </div>
+                `;
+            });
+            
+            // Render quiz if in quiz mode
+            if (quizMode && unit.quiz) {
+                html += `<div class="section">`;
+                html += `<div class="section-title">📝 Practice Questions</div>`;
+                
+                unit.quiz.forEach((q, index) => {
+                    if (q.type === 'tf') {
+                        html += renderTFQuestion(q, index);
+                    } else if (q.type === 'mc') {
+                        html += renderMCQuestion(q, index);
+                    }
+                });
+                
+                html += `</div>`;
+            }
+            
+            // Mark as completed button
+            const isCompleted = completedUnits.has(currentUnit);
+            html += `
+                <div style="margin-top: 40px; text-align: center;">
+                    <button class="control-btn ${isCompleted ? 'secondary' : 'primary'}" 
+                            onclick="markComplete('${currentUnit}')"
+                            style="padding: 15px 40px; font-size: 1.1em;">
+                        ${isCompleted ? '✓ Completed' : 'Mark as Complete'}
+                    </button>
+                </div>
+            `;
+            
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // Render True/False question
+        function renderTFQuestion(q, index) {
+            return `
+                <div class="quiz-question" id="q${index}">
+                    <h4>Question ${index + 1} (True/False)</h4>
+                    <p>${q.question}</p>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="control-btn primary" onclick="checkAnswer(${index}, true, ${q.answer})">
+                            True
+                        </button>
+                        <button class="control-btn primary" onclick="checkAnswer(${index}, false, ${q.answer})">
+                            False
+                        </button>
+                    </div>
+                    <div class="quiz-answer" id="answer${index}">
+                        <strong>Explanation:</strong> ${q.explanation}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Multiple Choice question
+        function renderMCQuestion(q, index) {
+            let html = `
+                <div class="quiz-question" id="q${index}">
+                    <h4>Question ${index + 1} (Multiple Choice)</h4>
+                    <p>${q.question}</p>
+                    <ul class="quiz-options">
+            `;
+            
+            q.options.forEach((opt, optIndex) => {
+                html += `
+                    <li class="quiz-option" onclick="checkMCAnswer(${index}, ${optIndex}, ${q.answer})">
+                        ${String.fromCharCode(97 + optIndex)}) ${opt}
+                    </li>
+                `;
+            });
+            
+            html += `
+                    </ul>
+                    <div class="quiz-answer" id="answer${index}">
+                        <strong>Correct Answer:</strong> ${String.fromCharCode(97 + q.answer)}) ${q.options[q.answer]}<br>
+                        <strong>Explanation:</strong> ${q.explanation}
+                    </div>
+                </div>
+            `;
+            
+            return html;
+        }
+
+        // Check True/False answer
+        function checkAnswer(index, userAnswer, correctAnswer) {
+            const answerDiv = document.getElementById(`answer${index}`);
+            answerDiv.classList.add('show');
+            
+            if (userAnswer === correctAnswer) {
+                answerDiv.classList.add('correct');
+                answerDiv.innerHTML = `<strong>✓ Correct!</strong><br>` + answerDiv.innerHTML;
+            } else {
+                answerDiv.classList.add('incorrect');
+                answerDiv.innerHTML = `<strong>✗ Incorrect.</strong> The correct answer is ${correctAnswer}.<br>` + answerDiv.innerHTML;
+            }
+        }
+
+        // Check Multiple Choice answer
+        function checkMCAnswer(index, userAnswer, correctAnswer) {
+            const answerDiv = document.getElementById(`answer${index}`);
+            answerDiv.classList.add('show');
+            
+            const options = document.querySelectorAll(`#q${index} .quiz-option`);
+            options.forEach((opt, idx) => {
+                if (idx === correctAnswer) {
+                    opt.classList.add('correct');
+                } else if (idx === userAnswer) {
+                    opt.classList.add('incorrect');
+                }
+                opt.style.pointerEvents = 'none';
+            });
+            
+            if (userAnswer === correctAnswer) {
+                answerDiv.classList.add('correct');
+            } else {
+                answerDiv.classList.add('incorrect');
+            }
+        }
+
+        // Toggle quiz mode
+        function toggleQuizMode() {
+            quizMode = !quizMode;
+            renderContent();
+        }
+
+        // Mark unit as complete
+        function markComplete(unitKey) {
+            if (completedUnits.has(unitKey)) {
+                completedUnits.delete(unitKey);
+            } else {
+                completedUnits.add(unitKey);
+            }
+            renderUnitNav();
+            renderContent();
+            updateProgress();
+            saveProgress();
+        }
+
+        // Update progress
+        function updateProgress() {
+            const total = Object.keys(studyData).length;
+            const completed = completedUnits.size;
+            const percent = Math.round((completed / total) * 100);
+            
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('unitsCompleted').textContent = completed;
+            document.getElementById('progressPercent').textContent = percent + '%';
+        }
+
+        // Show all units
+        function showAllUnits() {
+            alert('Navigate through units using the buttons above. Each unit contains theory, syntax, examples, and practice exercises!');
+        }
+
+        // Search content
+        function searchContent() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            if (searchTerm.length < 3) return;
+            
+            const contentArea = document.getElementById('contentArea');
+            const content = contentArea.innerHTML;
+            
+            // Remove previous highlights
+            const cleaned = content.replace(/<span class="highlight">(.*?)<\/span>/gi, '$1');
+            
+            if (searchTerm) {
+                // Highlight matching terms
+                const regex = new RegExp(`(${searchTerm})`, 'gi');
+                contentArea.innerHTML = cleaned.replace(regex, '<span class="highlight">$1</span>');
+            } else {
+                contentArea.innerHTML = cleaned;
+            }
+        }
+
+        // Copy code
+        function copyCode(button) {
+            const codeBlock = button.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Reset progress
+        function resetProgress() {
+            if (confirm('Are you sure you want to reset all progress?')) {
+                completedUnits.clear();
+                totalStudyTime = 0;
+                renderUnitNav();
+                updateProgress();
+                saveProgress();
+            }
+        }
+
+        // Study timer
+        function startStudyTimer() {
+            setInterval(() => {
+                const minutes = Math.floor((Date.now() - studyStartTime + totalStudyTime) / 60000);
+                document.getElementById('studyTime').textContent = minutes;
+            }, 60000); // Update every minute
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const progress = {
+                completedUnits: Array.from(completedUnits),
+                totalStudyTime: Date.now() - studyStartTime + totalStudyTime
+            };
+            localStorage.setItem('dbExamProgress', JSON.stringify(progress));
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('dbExamProgress');
+            if (saved) {
+                const progress = JSON.parse(saved);
+                completedUnits = new Set(progress.completedUnits || []);
+                totalStudyTime = progress.totalStudyTime || 0;
+                studyStartTime = Date.now();
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>
