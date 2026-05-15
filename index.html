@@ -809,6 +809,56 @@
 <span class="keyword">CREATE PUBLIC SYNONYM</span> emps <span class="keyword">FOR</span> employees;</pre>
                             </div>
                         `
+                                        },
+                    {
+                        title: "🔥 Advanced Practice Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Index Performance Testing</h4>
+                                <ol class="exercise-list">
+                                    <li>Create table TEST_EMPLOYEES with 1000+ rows</li>
+                                    <li>Query using last_name without index - note execution time</li>
+                                    <li>CREATE INDEX on last_name column</li>
+                                    <li>Query again and compare performance using EXPLAIN PLAN</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: Sequence Operations</h4>
+                                <ol class="exercise-list">
+                                    <li>Create sequence EMP_ID_SEQ starting at 1000, increment by 10</li>
+                                    <li>Use NEXTVAL in 5 INSERT statements</li>
+                                    <li>Check CURRVAL value</li>
+                                    <li>Query USER_SEQUENCES to see sequence details</li>
+                                    <li>ALTER SEQUENCE to change INCREMENT BY to 5</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: Complex View Creation</h4>
+                                <ol class="exercise-list">
+                                    <li>Create view HIGH_EARNERS showing employees with salary > 10000</li>
+                                    <li>Add WITH CHECK OPTION constraint</li>
+                                    <li>Try inserting a row with salary < 10000 - observe error</li>
+                                    <li>Create a read-only view DEPT_SUMMARY with aggregations</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: Function-Based Index</h4>
+                                <ol class="exercise-list">
+                                    <li>Create index on UPPER(last_name) for case-insensitive searches</li>
+                                    <li>Test with: SELECT * FROM employees WHERE UPPER(last_name) = 'KING'</li>
+                                    <li>Compare performance with regular index</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: Synonym Management</h4>
+                                <ol class="exercise-list">
+                                    <li>Create private synonym EMP for EMPLOYEES table</li>
+                                    <li>Create public synonym DEPTS for DEPARTMENTS</li>
+                                    <li>Test accessing tables using synonyms</li>
+                                    <li>Query USER_SYNONYMS and ALL_SYNONYMS</li>
+                                </ol>
+                            </div>
+                        `
                     }
                 ],
                 quiz: [
@@ -907,6 +957,66 @@
     <span class="keyword">SELECT AVG</span>(salary) <span class="keyword">FROM</span> employees 
     <span class="keyword">WHERE</span> department_id = e.department_id
 );</pre>
+                            </div>
+                        `
+                                        },
+                    {
+                        title: "🔥 Advanced Practice Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Single-Row Subquery Practice</h4>
+                                <ol class="exercise-list">
+                                    <li>Find employees earning more than the average salary</li>
+                                    <li>Find employees in the same department as 'King'</li>
+                                    <li>Find the employee with the highest salary in each department</li>
+                                </ol>
+                                <div class="code-block">
+                                    <pre><span class="comment">-- Solution hints:</span>
+<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees 
+<span class="keyword">WHERE</span> salary > (<span class="keyword">SELECT AVG</span>(salary) <span class="keyword">FROM</span> employees);</pre>
+                                </div>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: Multiple-Row Subquery with IN</h4>
+                                <ol class="exercise-list">
+                                    <li>Find all employees working in departments located in 'Seattle'</li>
+                                    <li>Find employees whose job_id matches anyone in department 90</li>
+                                    <li>List departments that have no employees</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: ANY and ALL Operators</h4>
+                                <ol class="exercise-list">
+                                    <li>Find employees earning less than ANY IT_PROG (less than maximum)</li>
+                                    <li>Find employees earning more than ALL clerks (more than maximum)</li>
+                                    <li>Compare results of < ANY vs < ALL</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: EXISTS vs IN Performance</h4>
+                                <ol class="exercise-list">
+                                    <li>Write query using EXISTS to find departments with employees</li>
+                                    <li>Write same query using IN</li>
+                                    <li>Compare execution plans</li>
+                                    <li>Understand when to use each approach</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: Correlated Subquery</h4>
+                                <ol class="exercise-list">
+                                    <li>Find employees earning more than their department average</li>
+                                    <li>Find departments where average salary > company average</li>
+                                    <li>List employees who are managers</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 6: NOT IN with NULL Handling</h4>
+                                <ol class="exercise-list">
+                                    <li>Find employees who are NOT managers using NOT IN</li>
+                                    <li>Observe the NULL issue if manager_id contains NULL</li>
+                                    <li>Fix using WHERE manager_id IS NOT NULL in subquery</li>
+                                    <li>Alternative: Use NOT EXISTS instead</li>
+                                </ol>
                             </div>
                         `
                     }
@@ -1009,6 +1119,55 @@
 <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> USER_ROLE_PRIVS;</pre>
                             </div>
                         `
+                                        },
+                    {
+                        title: "🔥 Comprehensive Practice Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Table Information Discovery</h4>
+                                <ol class="exercise-list">
+                                    <li>Query USER_TABLES to list all your tables</li>
+                                    <li>Find total number of rows in each table using USER_TABLES.NUM_ROWS</li>
+                                    <li>Query USER_TAB_COLUMNS for EMPLOYEES table structure</li>
+                                    <li>Find all tables with 'EMP' in their name</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: Constraint Investigation</h4>
+                                <ol class="exercise-list">
+                                    <li>Query USER_CONSTRAINTS to find all PRIMARY KEY constraints</li>
+                                    <li>Find all FOREIGN KEY constraints and their referenced tables</li>
+                                    <li>List CHECK constraints and their conditions</li>
+                                    <li>Query USER_CONS_COLUMNS to see which columns are constrained</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: Index Analysis</h4>
+                                <ol class="exercise-list">
+                                    <li>Query USER_INDEXES to find all indexes</li>
+                                    <li>Identify UNIQUE vs NON-UNIQUE indexes</li>
+                                    <li>Query USER_IND_COLUMNS to see indexed columns</li>
+                                    <li>Find unused indexes using INDEX_STATS</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: View Dependencies</h4>
+                                <ol class="exercise-list">
+                                    <li>Query USER_VIEWS to see all view definitions</li>
+                                    <li>Use USER_DEPENDENCIES to find view dependencies</li>
+                                    <li>Identify which views depend on EMPLOYEES table</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: Complete Schema Documentation</h4>
+                                <ol class="exercise-list">
+                                    <li>Generate list of all objects using USER_OBJECTS</li>
+                                    <li>Count objects by type (TABLE, VIEW, INDEX, etc.)</li>
+                                    <li>Find invalid objects: SELECT * FROM USER_OBJECTS WHERE STATUS='INVALID'</li>
+                                    <li>Create a complete schema documentation report</li>
+                                </ol>
+                            </div>
+                        `
                     }
                 ],
                 quiz: [
@@ -1085,6 +1244,46 @@
 <span class="keyword">SPOOL</span> employee_report.txt;
 <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> employees;
 <span class="keyword">SPOOL OFF</span>;</pre>
+                            </div>
+                        `
+                                        },
+                    {
+                        title: "🔥 Advanced SQL Scripting Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Substitution Variables</h4>
+                                <ol class="exercise-list">
+                                    <li>Create script using &variable for employee_id input</li>
+                                    <li>Use &&variable for values used multiple times</li>
+                                    <li>Test with: SELECT * FROM employees WHERE employee_id = &emp_id</li>
+                                    <li>Use DEFINE and UNDEFINE commands</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: ACCEPT Command</h4>
+                                <ol class="exercise-list">
+                                    <li>Use ACCEPT to prompt for department name with custom message</li>
+                                    <li>Accept NUMBER data type for salary input</li>
+                                    <li>Use PROMPT to display user instructions</li>
+                                    <li>Create interactive report generation script</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: Dynamic SQL Scripts</h4>
+                                <ol class="exercise-list">
+                                    <li>Create script that accepts table name and displays structure</li>
+                                    <li>Build dynamic WHERE clause based on user input</li>
+                                    <li>Generate custom reports with user-defined columns</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: Script File Organization</h4>
+                                <ol class="exercise-list">
+                                    <li>Create master script that calls multiple sub-scripts</li>
+                                    <li>Use START or @ to execute external scripts</li>
+                                    <li>Pass parameters between scripts</li>
+                                    <li>Build modular reporting system</li>
+                                </ol>
                             </div>
                         `
                     }
@@ -1206,6 +1405,52 @@
 /</pre>
                             </div>
                         `
+                                        },
+                    {
+                        title: "🔥 PL/SQL Block Practice",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Basic Anonymous Block</h4>
+                                <ol class="exercise-list">
+                                    <li>Write anonymous block declaring v_name VARCHAR2(50)</li>
+                                    <li>Assign a value and display using DBMS_OUTPUT.PUT_LINE</li>
+                                    <li>Add v_salary NUMBER(8,2) and perform calculations</li>
+                                    <li>Remember to SET SERVEROUTPUT ON</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: IF-THEN-ELSE Logic</h4>
+                                <ol class="exercise-list">
+                                    <li>Accept employee_id and fetch salary</li>
+                                    <li>Use IF-THEN-ELSIF to categorize salary: Low/Medium/High</li>
+                                    <li>Display appropriate message for each category</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: CASE Statements</h4>
+                                <ol class="exercise-list">
+                                    <li>Write CASE to convert job_id to job description</li>
+                                    <li>Use searched CASE for salary ranges</li>
+                                    <li>Compare simple CASE vs searched CASE</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: Exception Handling</h4>
+                                <ol class="exercise-list">
+                                    <li>Handle NO_DATA_FOUND when employee_id doesn't exist</li>
+                                    <li>Handle TOO_MANY_ROWS when query returns multiple rows</li>
+                                    <li>Add OTHERS exception handler for unexpected errors</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: Variable Scope</h4>
+                                <ol class="exercise-list">
+                                    <li>Create nested blocks to demonstrate variable scope</li>
+                                    <li>Declare same variable name in outer and inner blocks</li>
+                                    <li>Use labels to access outer block variables</li>
+                                </ol>
+                            </div>
+                        `
                     }
                 ],
                 quiz: [
@@ -1324,6 +1569,52 @@
     <span class="keyword">END LOOP</span>;
 <span class="keyword">END</span>;
 /</pre>
+                            </div>
+                        `
+                                        },
+                    {
+                        title: "🔥 Loop Mastery Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Basic LOOP</h4>
+                                <ol class="exercise-list">
+                                    <li>Create loop to display numbers 1 to 10</li>
+                                    <li>Use EXIT WHEN for loop termination</li>
+                                    <li>Calculate sum of numbers 1 to 100</li>
+                                    <li>Add counter variable and proper exit condition</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: WHILE Loop</h4>
+                                <ol class="exercise-list">
+                                    <li>Calculate factorial using WHILE loop</li>
+                                    <li>Display all even numbers from 2 to 20</li>
+                                    <li>Compare with basic LOOP implementation</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: FOR Loop Variations</h4>
+                                <ol class="exercise-list">
+                                    <li>Use FOR i IN 1..10 to display numbers</li>
+                                    <li>Use REVERSE to count down: FOR i IN REVERSE 1..10</li>
+                                    <li>Create multiplication table using nested FOR loops</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: Nested Loops</h4>
+                                <ol class="exercise-list">
+                                    <li>Create pattern printing using nested loops</li>
+                                    <li>Use labels: <<outer_loop>> and <<inner_loop>></li>
+                                    <li>Practice EXIT outer_loop WHEN condition</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: CONTINUE Statement</h4>
+                                <ol class="exercise-list">
+                                    <li>Skip odd numbers using CONTINUE WHEN MOD(i,2) != 0</li>
+                                    <li>Process only specific records with CONTINUE</li>
+                                    <li>Compare CONTINUE vs EXIT behavior</li>
+                                </ol>
                             </div>
                         `
                     }
@@ -1455,6 +1746,54 @@
     <span class="keyword">END IF</span>;
 <span class="keyword">END</span>;
 /</pre>
+                            </div>
+                        `
+                                        },
+                    {
+                        title: "🔥 Trigger Development Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: BEFORE INSERT Trigger</h4>
+                                <ol class="exercise-list">
+                                    <li>Create trigger to auto-generate employee_id using sequence</li>
+                                    <li>Use :NEW.employee_id := emp_seq.NEXTVAL</li>
+                                    <li>Set hire_date to SYSDATE if not provided</li>
+                                    <li>Test with INSERT without specifying these columns</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: AFTER UPDATE Trigger</h4>
+                                <ol class="exercise-list">
+                                    <li>Create audit log table: emp_audit (employee_id, old_salary, new_salary, change_date)</li>
+                                    <li>Build AFTER UPDATE trigger to log salary changes</li>
+                                    <li>Use :OLD.salary and :NEW.salary</li>
+                                    <li>Test by updating employee salaries</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: BEFORE DELETE Trigger</h4>
+                                <ol class="exercise-list">
+                                    <li>Prevent deletion of employees with dependents</li>
+                                    <li>Use RAISE_APPLICATION_ERROR(-20001, 'message')</li>
+                                    <li>Check if :OLD.dependent_count > 0</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: Multiple Event Trigger</h4>
+                                <ol class="exercise-list">
+                                    <li>Create trigger for INSERT OR UPDATE OR DELETE</li>
+                                    <li>Use INSERTING, UPDATING, DELETING conditions</li>
+                                    <li>Log different messages for each operation</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: Statement vs Row Level</h4>
+                                <ol class="exercise-list">
+                                    <li>Create statement-level trigger (without FOR EACH ROW)</li>
+                                    <li>Create row-level trigger (with FOR EACH ROW)</li>
+                                    <li>Test with UPDATE affecting multiple rows</li>
+                                    <li>Observe execution differences</li>
+                                </ol>
                             </div>
                         `
                     }
@@ -1609,6 +1948,80 @@
     <span class="keyword">CLOSE</span> emp_cv;
 <span class="keyword">END</span>;
 /</pre>
+                            </div>
+                        `
+                                        },
+                    {
+                        title: "🔥 Advanced Cursor Exercises",
+                        content: `
+                            <div class="exercise">
+                                <h4>Exercise 1: Basic Explicit Cursor</h4>
+                                <ol class="exercise-list">
+                                    <li>Declare cursor for all employees in department 30</li>
+                                    <li>Use OPEN, FETCH, CLOSE explicitly</li>
+                                    <li>Display employee_id and last_name</li>
+                                    <li>Use %NOTFOUND for loop exit</li>
+                                </ol>
+                                <div class="code-block">
+                                    <pre><span class="comment">-- Template:</span>
+<span class="keyword">DECLARE</span>
+  <span class="keyword">CURSOR</span> c_emp <span class="keyword">IS SELECT</span> * <span class="keyword">FROM</span> employees <span class="keyword">WHERE</span> dept_id = <span class="number">30</span>;
+  v_emp c_emp<span class="keyword">%ROWTYPE</span>;
+<span class="keyword">BEGIN</span>
+  <span class="keyword">OPEN</span> c_emp;
+  <span class="keyword">LOOP</span>
+    <span class="keyword">FETCH</span> c_emp <span class="keyword">INTO</span> v_emp;
+    <span class="keyword">EXIT WHEN</span> c_emp<span class="keyword">%NOTFOUND</span>;
+    DBMS_OUTPUT.PUT_LINE(v_emp.last_name);
+  <span class="keyword">END LOOP</span>;
+  <span class="keyword">CLOSE</span> c_emp;
+<span class="keyword">END</span>;</pre>
+                                </div>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 2: Cursor FOR Loop</h4>
+                                <ol class="exercise-list">
+                                    <li>Rewrite Exercise 1 using cursor FOR loop</li>
+                                    <li>Observe automatic OPEN, FETCH, CLOSE</li>
+                                    <li>No need for %NOTFOUND check</li>
+                                    <li>Compare code simplicity</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 3: Cursor with Parameters</h4>
+                                <ol class="exercise-list">
+                                    <li>Create cursor with department_id parameter</li>
+                                    <li>CURSOR c_emp(p_dept_id NUMBER) IS...</li>
+                                    <li>Call with different department values</li>
+                                    <li>Display results for each department</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 4: Cursor Attributes</h4>
+                                <ol class="exercise-list">
+                                    <li>Use %ISOPEN to check cursor status</li>
+                                    <li>Use %ROWCOUNT to track processed rows</li>
+                                    <li>Display "Processing row X of Y"</li>
+                                    <li>Practice %FOUND and %NOTFOUND</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 5: Record Types</h4>
+                                <ol class="exercise-list">
+                                    <li>Create custom record: TYPE emp_rec IS RECORD (id NUMBER, name VARCHAR2(50))</li>
+                                    <li>Declare variable: v_emp emp_rec;</li>
+                                    <li>Fetch into custom record</li>
+                                    <li>Compare with %ROWTYPE</li>
+                                </ol>
+                            </div>
+                            <div class="exercise">
+                                <h4>Exercise 6: Cursor FOR UPDATE</h4>
+                                <ol class="exercise-list">
+                                    <li>Declare cursor with FOR UPDATE clause</li>
+                                    <li>Lock rows for update</li>
+                                    <li>Use WHERE CURRENT OF cursor_name in UPDATE</li>
+                                    <li>Give 10% raise to IT_PROG employees</li>
+                                </ol>
                             </div>
                         `
                     }
